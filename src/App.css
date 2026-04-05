@@ -1,0 +1,8 @@
+.nav-tag {
+    text-decoration: none;
+    color: black;
+}
+
+.activate-nav-tag {
+    color: var(--nav-tab-color);
+}
