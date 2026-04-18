@@ -20,8 +20,8 @@ function MainLayout() {
                     name={"個人資訊"}
                     routePage={"info"} />
             </div>
-            <Divider />
-            <div style={{ "width": "70hw", "minWidth": "1344" }}>
+            <Divider style={{ "marginBottom": "1rem" }} />
+            <div style={{ "width": "max(1344px, 70%)", "maxWidth": "100%", "margin": "0 auto" }}>
                 <Outlet />
             </div>
         </Fragment>

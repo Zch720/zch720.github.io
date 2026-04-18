@@ -1,0 +1,9 @@
+{
+    "games": [
+        {
+            "name": "迷宮",
+            "image": "/game_image/maze.png",
+            "path": "/web-games/maze"
+        }
+    ]
+}

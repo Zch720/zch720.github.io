@@ -10,7 +10,7 @@ function PageTab(props: {
         <div style={{ "margin": "1rem" }}>
             <NavLink
                 to={routePage}
-                className={({ isActive }) => { return isActive ? 'nav-tag activate-nav-tag' : 'nav-tag'; }}
+                className={({ isActive }) => { return isActive ? "nav-tag activate-nav-tag" : "nav-tag"; }}
             >
                 {name}
             </NavLink>
