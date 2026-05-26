@@ -1,0 +1,28 @@
+---
+import NavBar from "../components/NavBar.astro";
+import "../styles/global.css";
+import "../styles/main_layout.css";
+---
+
+<!doctype html>
+<html lang="en" data-theme="mytheme">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" href="/icon_background_removal_500.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Zch Page</title>
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Chiron+GoRound+TC:wght@200..900&display=swap" rel="stylesheet">
+	</head>
+
+	<body class="bg-base-200">
+        <NavBar />
+        <div class="divider h-0 m-0" />
+		<div style={{ "width": "max(1344px, 70%)", "maxWidth": "100%", "margin": "0 auto" }}>
+			<slot />
+		</div>
+	</body>
+</html>

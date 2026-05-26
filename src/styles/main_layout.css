@@ -1,0 +1,10 @@
+[data-theme="mytheme"] {
+    .nav-tag {
+        text-decoration: none;
+        color: black;
+    }
+
+    .nav-tag.activate {
+        color: #405599;
+    }
+}

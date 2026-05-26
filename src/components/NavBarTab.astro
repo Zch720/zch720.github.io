@@ -1,0 +1,13 @@
+---
+interface Props {
+    name: string;
+    routePage: string;
+}
+const { name, routePage } = Astro.props;
+
+const currentPath = Astro.url.pathname;
+---
+
+<div style={{ "margin": "1rem" }}>
+    <a class:list={["nav-tag", { "activate": currentPath == routePage }]} href={routePage}>{name}</a>
+</div>

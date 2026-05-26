@@ -1,0 +1,162 @@
+---
+import NumberPicker from "../../utils/NumberPicker.astro"
+---
+
+<div class="flex flex-col">
+    <div class="flex items-center mx-auto my-3">
+        Rows <NumberPicker id="row-number-picker" value={10} class="mx-2" />
+        &nbsp;&nbsp;
+        Columns <NumberPicker id="col-number-picker" value={10} class="mx-2" />
+    </div>
+    <div id="canvases-container" class="relative mx-auto my-0">
+        <canvas id="maze-canvas" class="absolute z-1" />
+        <canvas id="player-canvas" class="absolute z-2" />
+    </div>
+</div>
+
+<script>
+import type { NumberPicker } from "../../utils/NumberPicker";
+import { checkCollision } from "./collision";
+import { calcDrawerInfo, clearMazeCanvas, clearPlayerCanvas, drawMaze, drawPlayer } from "./drawer";
+import { generateMaze } from "./game_control";
+import { InputState, registerInput } from "./input";
+import { getMazeSegments } from "./maze_segment";
+import type { CanvasSize, DrawerInfo, MazeSize, Player, Segment, Size } from "./type_define";
+import { DefaultDrawerInfo, DefaultMazeSize, DefaultSize, Maze, Position } from "./type_define";
+
+    let drawerInfo: DrawerInfo = DefaultDrawerInfo;
+    let canvasesContainer: HTMLElement | null = null;
+    let mazeCanvas: HTMLCanvasElement | null = null;
+    let playerCanvas: HTMLCanvasElement | null = null;
+    let rowNumberPicker: NumberPicker | null = null;
+    let colNumberPicker: NumberPicker | null = null;
+
+    let frameTimestamp: number = 0;
+    let inputState: InputState = new InputState();
+
+    let mazeSize: MazeSize = DefaultMazeSize;
+    let maze: Maze;
+    let segments: Segment[];
+    let player: Player;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        registerInput(inputState);
+        initElements();
+        initNumberPickers();
+        initMaze();
+
+        renderMaze();
+        requestAnimationFrame(frame);
+    });
+
+    function initElements() {
+        canvasesContainer = document.getElementById("canvases-container");
+        mazeCanvas = document.getElementById("maze-canvas") as HTMLCanvasElement;
+        playerCanvas = document.getElementById("player-canvas") as HTMLCanvasElement;
+        rowNumberPicker = document.getElementById("row-number-picker") as NumberPicker;
+        colNumberPicker = document.getElementById("col-number-picker") as NumberPicker;
+    }
+
+    function initNumberPickers() {
+        if (rowNumberPicker) {
+            rowNumberPicker.addEventListener('number-picker-change', (e: Event) => {
+                mazeSize.rows = rowNumberPicker!.getValue();
+                initMaze();
+                renderMaze();
+            });
+        }
+        if (colNumberPicker) {
+            colNumberPicker.addEventListener('number-picker-change', (e: Event) => {
+                mazeSize.cols = colNumberPicker!.getValue();
+                initMaze();
+                renderMaze();
+            });
+        }
+    }
+
+    function initSize() {
+        let maxSize = getMaxValidSize();
+        drawerInfo = calcDrawerInfo(maxSize, mazeSize);
+        setCanvasContainerSize();
+        setCanvasSize(mazeCanvas, drawerInfo.canvasSize);
+        setCanvasSize(playerCanvas, drawerInfo.canvasSize);
+    }
+
+    function getMaxValidSize(): Size {
+        if (!canvasesContainer) return DefaultSize;
+        return {
+            width: Math.min(Math.max(Math.floor((window.innerWidth * 70) / 100), 1344), window.innerWidth),
+            height: Math.floor((window.innerHeight * 75) / 100)
+        };
+    }
+
+    function setCanvasContainerSize() {
+        if (!canvasesContainer) return;
+        canvasesContainer.style.width = `${drawerInfo.canvasSize.width}px`;
+        canvasesContainer.style.height = `${drawerInfo.canvasSize.height}px`;
+    }
+
+    function setCanvasSize(
+        canvas: HTMLCanvasElement | null,
+        size: CanvasSize
+    ) {
+        if (!canvas) return;
+        canvas.width = size.width;
+        canvas.height = size.height;
+    }
+
+    function initMaze() {
+        initSize();
+
+        maze = generateMaze(mazeSize);
+        segments = getMazeSegments(maze, drawerInfo);
+        player = {
+            position: new Position(
+                drawerInfo.wallSize + drawerInfo.blockSize / 2,
+                drawerInfo.wallSize + drawerInfo.blockSize / 2
+            ),
+            radius: Math.floor(drawerInfo.blockSize / 4),
+            speed: drawerInfo.unitSize
+        };
+    }
+
+    function frame(
+        timestamp: number
+    ) {
+        if (!frameTimestamp) {
+            frameTimestamp = timestamp;
+        }
+        const dt = (timestamp - frameTimestamp) / 1000;
+        frameTimestamp = timestamp;
+        update(dt);
+        render();
+        requestAnimationFrame(frame);
+    }
+
+    function renderMaze() {
+        if (!mazeCanvas) return;
+        const ctx = mazeCanvas.getContext("2d");
+        if (!ctx) return;
+        clearMazeCanvas(ctx, drawerInfo);
+        drawMaze(ctx, segments);
+    }
+
+    function update(
+        dt: number
+    ) {
+        const deltaMove = inputState.getMoveVector().mul(player.speed * dt);
+        player.position = player.position.add(deltaMove);
+
+        if (checkCollision(player, segments)) {
+            player.position = player.position.sub(deltaMove);
+        }
+    }
+
+    function render() {
+        if (!playerCanvas) return;
+        const ctx = playerCanvas.getContext("2d");
+        if (!ctx) return;
+        clearPlayerCanvas(ctx);
+        drawPlayer(ctx, player);
+    }
+</script>

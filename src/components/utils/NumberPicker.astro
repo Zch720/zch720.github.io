@@ -1,0 +1,29 @@
+---
+interface Props {
+    id?: string;
+    class?: string;
+    min?: number | null;
+    max?: number | null;
+    value?: number;
+}
+const {
+    id = crypto.randomUUID(),
+    class: className = "",
+    min = null,
+    max = null,
+    value = 0
+} = Astro.props;
+---
+
+<number-picker id={id} data-min={min} data-max={max} data-value={value}>
+    <div class={`number-picker flex items-center gap-2 ${className}`}>
+        <button class="sub-btn btn btn-square btn-outline">-</button>
+        <span class="value text-lg font-semibold">{value}</span>
+        <button class="add-btn btn btn-square btn-outline">+</button>
+    </div>
+</number-picker>
+
+<script>
+    import { NumberPicker } from './NumberPicker.ts';
+    customElements.define('number-picker', NumberPicker);
+</script>

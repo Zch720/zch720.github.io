@@ -1,0 +1,32 @@
+---
+import GameBlock from "../components/web-games/GameBlock.astro";
+import MainLayout from "../layouts/MainLayout.astro";
+import gameData from "../assets/games_data.json";
+---
+
+<MainLayout>
+    <div class="
+            px-6
+            mx-auto mt-5
+            grid gap-10 place-items-center
+            grid-cols-[repeat(auto-fill,minmax(10rem,1fr))]"
+    >
+        {gameData.games.map(game => (
+            <GameBlock
+                name={game.name}
+                href={game.href}
+                imageHref={game.imageHref}
+            />
+        ))}
+    </div>
+</MainLayout>
+
+<script>
+    document.addEventListener("click", (e) => {
+        const target = (e.target as HTMLElement)?.closest(".game-block") as HTMLElement;
+        if (!target) return;
+
+        const href = target.dataset.href;
+        window.location.href = href ? href : "";
+    });
+</script>

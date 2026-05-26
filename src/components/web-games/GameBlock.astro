@@ -1,0 +1,20 @@
+---
+interface Props {
+    name: string;
+    href: string;
+    imageHref: string;
+}
+const { name, href, imageHref } = Astro.props;
+---
+
+<div
+    class="game-block card w-40 bg-base-100 card-border border-base-300"
+    data-href={href}
+>
+    <figure class="px-3 pt-3">
+        <img class="rounded-md" src={imageHref} />
+    </figure>
+    <div class="card-body items-center text-center">
+        <h2 class="card-title font-medium">{name}</h2>
+    </div>
+</div>
