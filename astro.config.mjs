@@ -13,5 +13,8 @@ export default defineConfig({
         plugins: [
             tailwindcss()
         ]
+    },
+    build: {
+        assets: "assets"
     }
 });
